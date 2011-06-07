@@ -1,26 +1,9 @@
 telnet = require './telnet'
+Player = require('./player').Player
 
 players = []
 
 class Room
-class Player
-    constructor: (@client) ->
-        @room = rooms[1]
-
-    move: (direction) ->
-        nextRoomId = @room.links[direction]
-        if nextRoomId?
-            @room = rooms[nextRoomId]
-            @speak()
-        else
-            @client.writeLine "You can't go that way"
-
-    speak: () ->
-        @client.writeLine "You are in room #{@room.id}"
-        @client.writeLine @room.title
-        @client.writeLine()
-        @client.writeLine "Exits: [#{e for e of @room.links}]"
-
 
 rooms = {
 1: {
@@ -38,24 +21,27 @@ rooms = {
 }}
 
 server = telnet.createServer ((client)->
-    player = new Player(client)
+    player = new Player(client, rooms)
 
     players.push player
 
     player.speak()
+    player.showPrompt()
 
     client.on 'command', (cmd)->
         switch cmd
-            when "" then client.writeLine "Please enter a command"
-            when "hello" then client.writeLine "Why hello there"
+            when "" then # Do nothing
             when "n" then player.move("n")
             when "e" then player.move("e")
             when "w" then player.move("w")
-            else client.writeLine "You typed #{cmd}"
-        client.write("> ")
+            when "s" then player.move("s")
+            when "quit"
+                client.end("goodbye.")
+                return
+            else client.writeLine "Huh?"
+        player.showPrompt()
 
-    client.on 'close', (had_error)->
-        console.log "Bye-bye"
+    client.on 'close', ()->
         idx = players.indexOf player
         if idx != -1
             players.splice idx, 1

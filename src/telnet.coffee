@@ -24,6 +24,9 @@ class Client extends events.EventEmitter
 
     writeLine: (str) -> @_socket.write "#{if str? then str else ''}\r\n"
     write: (str) -> @_socket.write str
+    end: (data) ->
+        @writeLine data
+        @_socket.end()
 
 telnet.createServer = (callback) ->
     net.createServer (socket) ->
