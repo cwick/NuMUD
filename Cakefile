@@ -8,6 +8,8 @@ run = (cmd) ->
     exec cmd, (err, stdout, stderr) ->
         console.log stdout.trim() if stdout
         console.log stderr.trim() if stderr
+        if err
+            process.exit err.code
 
 task 'build', 'build NuMUD', ->
     run 'coffee -c -o lib src/'

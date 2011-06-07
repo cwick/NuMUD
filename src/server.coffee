@@ -1,9 +1,18 @@
 telnet = require './telnet'
 Player = require('./player').Player
+command = require('./cmd')
 
 players = []
 
-class Room
+genmove = (dir) ->
+    (context) ->
+        context.player.move dir
+
+command.register "north", ["n"], genmove('n')
+command.register "east", ["e"], genmove('e')
+command.register "south", ["s"], genmove('s')
+command.register "west", ["w"], genmove('w')
+command.register "quit", null, (context) -> context.player.disconnect "goodbye."
 
 rooms = {
 1: {
@@ -23,22 +32,16 @@ rooms = {
 server = telnet.createServer ((client)->
     player = new Player(client, rooms)
 
-    players.push player
-
     player.speak()
     player.showPrompt()
+    players.push player
+
+    context = { player: player }
 
     client.on 'command', (cmd)->
-        switch cmd
-            when "" then # Do nothing
-            when "n" then player.move("n")
-            when "e" then player.move("e")
-            when "w" then player.move("w")
-            when "s" then player.move("s")
-            when "quit"
-                client.end("goodbye.")
-                return
-            else client.writeLine "Huh?"
+        if cmd != ""
+            command.doString(cmd, context)
+
         player.showPrompt()
 
     client.on 'close', ()->
@@ -47,5 +50,8 @@ server = telnet.createServer ((client)->
             players.splice idx, 1
 )
 
-server.listen 8000
+port = 8000
+server.listen port
 
+
+console.log "NuMUD server started on port #{port}"

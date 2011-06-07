@@ -1,6 +1,11 @@
 class Player
     constructor: (@client, @db) ->
         @room = @db[1]
+        @isDisconnected = false
+
+        @client.on 'end', () =>
+            console.log 'end'
+            @isDisconnected = true
 
     move: (direction) ->
         nextRoomId = @room.links[direction]
@@ -8,15 +13,27 @@ class Player
             @room = @db[nextRoomId]
             @speak()
         else
-            @client.writeLine "You can't go that way"
+            @writeLine "You can't go that way"
 
     speak: () ->
-        @client.writeLine "You are in room #{@room.id}"
-        @client.writeLine @room.title
-        @client.writeLine()
-        @client.writeLine "Exits: [#{e for e of @room.links}]"
+        @writeLine "You are in room #{@room.id}"
+        @writeLine @room.title
+        @writeLine()
+        @writeLine "Exits: [#{e for e of @room.links}]"
 
     showPrompt: () ->
-        @client.write("> ")
+        @write("> ")
+
+    write: (str) ->
+        if not @isDisconnected
+            @client.write str
+
+    writeLine: (str) ->
+        if not @isDisconnected
+            @client.writeLine str
+
+    disconnect: (message) ->
+        @client.end message
+        @isDisconnected = true
 
 exports.Player = Player

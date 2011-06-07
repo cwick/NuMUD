@@ -22,6 +22,9 @@ class Client extends events.EventEmitter
         @_socket.on 'close', (had_error)=>
             @emit 'close', had_error
 
+        @_socket.on 'end', ()=>
+            @emit 'end'
+
     writeLine: (str) -> @_socket.write "#{if str? then str else ''}\r\n"
     write: (str) -> @_socket.write str
     end: (data) ->
