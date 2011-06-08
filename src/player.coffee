@@ -4,7 +4,6 @@ class Player
         @isDisconnected = false
 
         @client.on 'end', () =>
-            console.log 'end'
             @isDisconnected = true
 
     move: (direction) ->

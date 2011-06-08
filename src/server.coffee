@@ -13,6 +13,11 @@ command.register "east", ["e"], genmove('e')
 command.register "south", ["s"], genmove('s')
 command.register "west", ["w"], genmove('w')
 command.register "quit", null, (context) -> context.player.disconnect "goodbye."
+command.register "say", ["^'"], (context, args) ->
+    if args.length == 0
+        context.player.writeLine "What would you like to say?"
+    else
+        context.player.writeLine "You say, \"#{args}\" "
 
 rooms = {
 1: {
@@ -39,8 +44,7 @@ server = telnet.createServer ((client)->
     context = { player: player }
 
     client.on 'command', (cmd)->
-        if cmd != ""
-            command.doString(cmd, context)
+        command.doString(cmd, context)
 
         player.showPrompt()
 
