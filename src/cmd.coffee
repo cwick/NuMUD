@@ -16,17 +16,20 @@ emptyCommand = {
 }
 
 # Try to find 'str' in the list of known commands.
+#
 # If that fails, find a command which has 'str' as one of its aliases
 # If nothing can be found, return undefined
 findCommandOrAlias = (str) ->
     findCommand(str) or findAlias(str)
 
 # Try to find 'str' in the list of known commands
+#
 # Return the command corresponding to 'str' or undefined
 findCommand = (str) ->
     if str == "" then emptyCommand else commands[str]
 
 # Try to find 'str' in the list of known command aliases
+#
 # Return the command corresponding to 'str' or undefined
 findAlias = (str) ->
     for own k,cmd of commands when str in cmd.aliases
@@ -59,7 +62,7 @@ parseString = (str) =>
 
     [cmd, args]
 
-exports.register = (name, aliases, callback) ->
+register = (name, aliases, callback) ->
     cmd = {
         name: name
         aliases: aliases
@@ -74,7 +77,14 @@ exports.register = (name, aliases, callback) ->
             aliases[i] = alias
             prefixes.push alias
 
-exports.doString = (str, context) ->
+doString = (str, context) ->
     [cmd, args] = parseString str
 
     (findCommandOrAlias(cmd) or defaultCommand).callback(context, args)
+
+
+#
+# Module exports
+#
+exports.register = register
+exports.doString = doString
