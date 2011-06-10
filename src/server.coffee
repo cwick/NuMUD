@@ -4,29 +4,17 @@ command = require('./cmd')
 rooms = require('./rooms')
 players = []
 
-genmove = (dir) ->
-    (context) ->
-        context.player.move dir
-
-command.register "north", ["n"], genmove('n')
-command.register "east", ["e"], genmove('e')
-command.register "south", ["s"], genmove('s')
-command.register "west", ["w"], genmove('w')
-command.register "quit", null, (context) -> context.player.disconnect "goodbye."
-command.register "say", ["^'"], (context, args) ->
-    if args.length == 0
-        context.player.writeLine "What would you like to say?"
-    else
-        context.player.writeLine "You say, \"#{args}\" "
-
 server = telnet.createServer ((client)->
     player = new Player(client, rooms)
 
-    player.speak()
+    player.look()
     player.showPrompt()
     players.push player
 
-    context = { player: player }
+    context = {
+        player: player
+        playerList: players
+    }
 
     client.on 'command', (cmd)->
         command.doString(cmd, context)
