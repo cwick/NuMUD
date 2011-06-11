@@ -2,26 +2,28 @@ command = require('./cmd')
 spells = require('./spells')
 
 class Player
-    constructor: (@client, @db) ->
-        @room = @db[1]
+    constructor: (@client) ->
         @isDisconnected = false
 
         @client.on 'end', () =>
             @isDisconnected = true
 
-    move: (direction) ->
-        nextRoomId = @room.links[direction]
-        if nextRoomId?
-            @room = @db[nextRoomId]
+    move: (world, direction) ->
+        nextRoom = @room.followLink direction
+
+        if nextRoom
+            world.moveEntity this, nextRoom
             @look()
         else
             @writeLine "You can't go that way"
 
     look: () ->
-        @writeLine "You are in room #{@room.id}"
-        @writeLine @room.title
-        @writeLine()
-        @writeLine "Exits: [#{e for e of @room.links}]"
+
+        @writeLine \
+            """You are in room #{@room.id}
+               #{@room.title}
+
+               Exits: [#{e for e of @room.links}]"""
 
     showPrompt: () ->
         @write("> ")
@@ -43,8 +45,8 @@ class Player
 # Commands
 #
 genmove = (dir) ->
-    (context) ->
-        context.player.move dir
+    (context) -> context.player.move context.world, dir
+
 
 command.register "north", ["n"], genmove('n')
 command.register "east", ["e"], genmove('e')
@@ -55,6 +57,8 @@ command.register "say", ["^'"], (context, args) ->
     if args.length == 0
         context.player.writeLine "What would you like to say?"
     else
-        spells.speak.cast(context, context.player, args)
+        spells.speak.cast(context.world, context.player, args)
 
+command.register "look", ["l"], (context) -> context.player.look()
+command.register "exits", ["exit"], (context) -> context.player.look()
 exports.Player = Player

@@ -2,18 +2,20 @@ telnet = require './telnet'
 Player = require('./player').Player
 command = require('./cmd')
 rooms = require('./rooms')
-players = []
+World = require('./world')
+
+world = new World(rooms)
 
 server = telnet.createServer ((client)->
-    player = new Player(client, rooms)
+    player = new Player(client)
+    world.addPlayer(player)
 
     player.look()
     player.showPrompt()
-    players.push player
 
     context = {
         player: player
-        playerList: players
+        world: world
     }
 
     client.on 'command', (cmd)->
@@ -21,10 +23,7 @@ server = telnet.createServer ((client)->
 
         player.showPrompt()
 
-    client.on 'close', ()->
-        idx = players.indexOf player
-        if idx != -1
-            players.splice idx, 1
+    client.on 'close', () -> world.removePlayer player
 )
 
 port = 8000

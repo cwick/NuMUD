@@ -28,17 +28,17 @@ class SpeakSpellView extends SpellView
 
 
 class Spell
-    cast: (context, caster, args...) ->
-        [data, players] = @apply context, caster, args
+    cast: (world, caster, args...) ->
+        [data, players] = @apply world, caster, args
         for player in players
             new @view(player).render caster, data
 
-    apply: (context, caster, args...) -> [{}, []]
+    apply: (world, caster, args...) -> [{}, []]
     view: SpellView
 
 class SpeakSpell extends Spell
-    apply: (context, caster, message) ->
-        return [{ message: message }, context.playerList]
+    apply: (world, caster, message) ->
+        return [{ message: message }, world.playersInRoom(caster.room)]
 
     view: SpeakSpellView
 
