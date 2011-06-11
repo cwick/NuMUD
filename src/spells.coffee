@@ -14,31 +14,31 @@ class HealSpellView
 
 
 class SpellView
-    constructor: (@player) ->
+    constructor: (@viewer) ->
 
 class SpeakSpellView extends SpellView
     render: (caster, data) ->
-        if @player == caster
-            @player.writeLine "You say, \"#{data.message}\""
+        if @viewer == caster
+            @viewer.writeLine "You say, \"#{data.message}\""
         else
-            @player.writeLine()
-            @player.writeLine "Somebody says, \"#{data.message}\""
-            @player.showPrompt()
+            @viewer.writeLine()
+            @viewer.writeLine "Somebody says, \"#{data.message}\""
+            @viewer.showPrompt()
 
 
 
 class Spell
     cast: (world, caster, args...) ->
-        [data, players] = @apply world, caster, args
-        for player in players
-            new @view(player).render caster, data
+        [data, entities] = @apply world, caster, args
+        for entity in entities
+            new @view(entity).render caster, data
 
     apply: (world, caster, args...) -> [{}, []]
     view: SpellView
 
 class SpeakSpell extends Spell
     apply: (world, caster, message) ->
-        return [{ message: message }, world.playersInRoom(caster.room)]
+        return [{ message: message }, caster.room.entities]
 
     view: SpeakSpellView
 

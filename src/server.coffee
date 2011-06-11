@@ -8,7 +8,7 @@ world = new World(rooms)
 
 server = telnet.createServer ((client)->
     player = new Player(client)
-    world.addPlayer(player)
+    world.addEntity(player, 1)
 
     player.look()
     player.showPrompt()
@@ -23,7 +23,7 @@ server = telnet.createServer ((client)->
 
         player.showPrompt()
 
-    client.on 'close', () -> world.removePlayer player
+    client.on 'close', () -> world.removeEntity player
 )
 
 port = 8000

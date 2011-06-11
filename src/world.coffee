@@ -1,14 +1,22 @@
-_=require('../lib/underscore')
+_ = require('../lib/underscore')
+entityDefs = require('./entities')
+{Entity} = require('./entity')
 
 class Room
     constructor: (@world, definition) ->
         _(this).extend definition
 
-        @entities = []
+        if _.isUndefined @entities
+            @entities = []
+
+        # Load up entities from the entity database
+        @entities = _.compact(
+            (if entityDefs[id] then new Entity(entityDefs[id]) else null ) for id in @entities)
 
     addEntity: (entity) ->
-        @entities.push entity
-        entity.room = this
+        if not _(@entities).include entity
+            @entities.push entity
+            entity.room = this
 
     removeEntity: (entity) ->
         idx = @entities.indexOf entity
@@ -22,33 +30,27 @@ class Room
 
 class World
     constructor: (roomDefinitions) ->
+        # Collection of all rooms
         @rooms = {}
+        # Collection of all entity instances
+        @entities = {}
 
         # Load up room objects from their definitions
         for own id, room of roomDefinitions
-            do (room) => @rooms[id] = new Room(this, room)
-
-        @players = []
-
-    playersInRoom: (roomOrId) ->
-        result = @roomFromId(roomOrId)?.entities
-        if not result
-            result = []
-        return result
+            do (id, room) => @rooms[id] = new Room(this, room)
 
     roomFromId: (roomId) ->
         if roomId instanceof Object then roomId else @rooms[roomId]
 
-    addPlayer: (player) ->
-        if not _(@players).include player
-            @players.push player
-            @roomFromId(1).addEntity(player)
+    addEntity: (entity, roomOrId) ->
+        if not @entities[entity.id]
+            @entities[entity.id] = entity
+            @roomFromId(roomOrId).addEntity(entity)
 
-    removePlayer: (player) ->
-        idx = @players.indexOf player
-        if idx != -1
-            @players.splice idx, 1
-            player.room = null
+    removeEntity: (entity) ->
+        delete @entities[entity.id]
+        if entity.room
+            entity.room.removeEntity(entity)
 
 
     moveEntity: (entity, roomOrId) ->

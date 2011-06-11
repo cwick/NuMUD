@@ -1,8 +1,10 @@
 command = require('./cmd')
 spells = require('./spells')
+{Entity} = require('./entity')
 
-class Player
+class Player extends Entity
     constructor: (@client) ->
+        super()
         @isDisconnected = false
 
         @client.on 'end', () =>
@@ -22,6 +24,8 @@ class Player
         @writeLine \
             """You are in room #{@room.id}
                #{@room.title}
+
+               #{"A " + e.name + " stands here" for e in @room.entities when e isnt this}
 
                Exits: [#{e for e of @room.links}]"""
 
