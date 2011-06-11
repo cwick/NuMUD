@@ -1,6 +1,7 @@
 command = require('./cmd')
 spells = require('./spells')
 {Entity} = require('./entity')
+Milk = require('../lib/milk')
 
 class Player extends Entity
     constructor: (@client) ->
@@ -21,13 +22,32 @@ class Player extends Entity
 
     look: () ->
 
-        @writeLine \
-            """You are in room #{@room.id}
-               #{@room.title}
+        data = {
+            id: @room.id
+            title: @room.title
+            entities: (block) =>
+                result = (Milk.render block, entity \
+                    for entity in @room.entities when entity isnt this).join("")
 
-               #{"A " + e.name + " stands here" for e in @room.entities when e isnt this}
+                if result.length != 0 then result += "\n"
+            exits: () =>
+                link for link of @room.links
 
-               Exits: [#{e for e of @room.links}]"""
+
+        }
+
+        template = """
+        You are in room \#{{id}}
+        {{title}}
+
+        {{#entities}}
+        A {{name}} stands here.
+        {{/entities}}
+        Exits: [{{exits}}]
+        """
+
+        @writeLine Milk.render template, data
+
 
     showPrompt: () ->
         @write("> ")
