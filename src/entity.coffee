@@ -11,6 +11,8 @@ class Entity
     # till I find a better solution
     write: ->
     writeLine: ->
-    showPrompt: ->
+
+    handleEvent: (event, sender, args) ->
+        # Do nothing
 
 exports.Entity = Entity

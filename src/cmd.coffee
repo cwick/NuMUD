@@ -6,8 +6,8 @@ PREFIX_SPECIFIER = "^"
 # Command chosen when we don't understand what the player typed
 defaultCommand = {
     callback:
-        (context) ->
-            context.player.writeLine "Huh?"
+        (player) ->
+            player.writeLine "Huh?"
 }
 
 # A do-nothing command
@@ -77,10 +77,10 @@ register = (name, aliases, callback) ->
             aliases[i] = alias
             prefixes.push alias
 
-doString = (str, context) ->
+doString = (str, player) ->
     [cmd, args] = parseString str
 
-    (findCommandOrAlias(cmd) or defaultCommand).callback(context, args)
+    (findCommandOrAlias(cmd) or defaultCommand).callback(player, args)
 
 
 #

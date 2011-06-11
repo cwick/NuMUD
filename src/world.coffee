@@ -1,5 +1,6 @@
 _ = require('../lib/underscore')
 entityDefs = require('./entities')
+roomDefs = require('./rooms')
 {Entity} = require('./entity')
 
 class Room
@@ -58,11 +59,24 @@ class World
         oldRoom = entity.room
 
         if newRoom and (newRoom isnt oldRoom)
+            eventArgs =
+                oldRoom: oldRoom
+                newRoom: newRoom
+
             if oldRoom
                 oldRoom.removeEntity(entity)
+                @emit "leaveRoom", entity, eventArgs, (e)->e.room is oldRoom
 
             newRoom.addEntity(entity)
+            @emit "enterRoom", entity, eventArgs, (e)->e.room is newRoom
 
 
-module.exports = World
+    emit: (event, sender, args, filter) ->
+        if not filter
+            filter = -> true
+
+        for id, entity of @entities when filter(entity)
+                do (entity) -> entity.handleEvent(event, sender, args)
+
+module.exports = new World(roomDefs)
 

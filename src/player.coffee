@@ -2,23 +2,35 @@ command = require('./cmd')
 spells = require('./spells')
 {Entity} = require('./entity')
 Milk = require('../lib/milk')
+World = require('./world')
 
 class Player extends Entity
     constructor: (@client) ->
         super()
         @isDisconnected = false
+        @name = Math.random()
 
         @client.on 'end', () =>
             @isDisconnected = true
 
-    move: (world, direction) ->
+    handleEvent: (event, sender, args) ->
+        movementHandler = (verb) =>
+            if sender isnt this
+                @writeLine "#{sender.name} #{verb} the room."
+
+        switch event
+            when "leaveRoom" then movementHandler("left")
+            when "enterRoom" then movementHandler("entered")
+
+    move: (direction) ->
         nextRoom = @room.followLink direction
 
         if nextRoom
-            world.moveEntity this, nextRoom
+            World.moveEntity this, nextRoom
             @look()
         else
             @writeLine "You can't go that way"
+
 
     look: () ->
 
@@ -69,20 +81,20 @@ class Player extends Entity
 # Commands
 #
 genmove = (dir) ->
-    (context) -> context.player.move context.world, dir
+    (player) -> player.move dir
 
 
 command.register "north", ["n"], genmove('n')
 command.register "east", ["e"], genmove('e')
 command.register "south", ["s"], genmove('s')
 command.register "west", ["w"], genmove('w')
-command.register "quit", null, (context) -> context.player.disconnect "goodbye."
-command.register "say", ["^'"], (context, args) ->
+command.register "quit", null, (player) -> player.disconnect "goodbye."
+command.register "say", ["^'"], (player, args) ->
     if args.length == 0
-        context.player.writeLine "What would you like to say?"
+        player.writeLine "What would you like to say?"
     else
-        spells.speak.cast(context.world, context.player, args)
+        spells.speak.cast(player, args)
 
-command.register "look", ["l"], (context) -> context.player.look()
-command.register "exits", ["exit"], (context) -> context.player.look()
+command.register "look", ["l"], (player) -> player.look()
+command.register "exits", ["exit"], (player) -> player.look()
 exports.Player = Player

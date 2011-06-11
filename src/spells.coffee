@@ -23,21 +23,20 @@ class SpeakSpellView extends SpellView
         else
             @viewer.writeLine()
             @viewer.writeLine "Somebody says, \"#{data.message}\""
-            @viewer.showPrompt()
 
 
 
 class Spell
-    cast: (world, caster, args...) ->
-        [data, entities] = @apply world, caster, args
+    cast: (caster, args...) ->
+        [data, entities] = @apply caster, args
         for entity in entities
             new @view(entity).render caster, data
 
-    apply: (world, caster, args...) -> [{}, []]
+    apply: (caster, args...) -> [{}, []]
     view: SpellView
 
 class SpeakSpell extends Spell
-    apply: (world, caster, message) ->
+    apply: (caster, message) ->
         return [{ message: message }, caster.room.entities]
 
     view: SpeakSpellView
