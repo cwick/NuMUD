@@ -55,9 +55,6 @@ command.register "say", ["^'"], (context, args) ->
     if args.length == 0
         context.player.writeLine "What would you like to say?"
     else
-        # Spell / view test. This isn't how it will really work!
-        data = new spells.SpeakSpell().cast(context.player, args)
-        for player in context.playerList
-            new spells.SpeakSpellView().render(player, context.player, data)
+        spells.speak.cast(context, context.player, args)
 
 exports.Player = Player

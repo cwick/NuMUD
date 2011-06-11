@@ -7,24 +7,41 @@ class HealSpell
 
         return { amount: healAmount }
 
-class SpeakSpell
-    cast: (caster, message) ->
-        return { message: message }
 
 class HealSpellView
     something: (player) ->
         player.writeLine "#{caster.name} heals for #{something} points"
 
-class SpeakSpellView
-    render: (player, caster, data) ->
-        if player == caster
-            player.writeLine "You say, \"#{data.message}\""
+
+class SpellView
+    constructor: (@player) ->
+
+class SpeakSpellView extends SpellView
+    render: (caster, data) ->
+        if @player == caster
+            @player.writeLine "You say, \"#{data.message}\""
         else
-            player.writeLine()
-            player.writeLine "Somebody says, \"#{data.message}\""
-            player.showPrompt()
+            @player.writeLine()
+            @player.writeLine "Somebody says, \"#{data.message}\""
+            @player.showPrompt()
 
 
 
-exports.SpeakSpell = SpeakSpell
-exports.SpeakSpellView = SpeakSpellView
+class Spell
+    cast: (context, caster, args...) ->
+        [data, players] = @apply context, caster, args
+        for player in players
+            new @view(player).render caster, data
+
+    apply: (context, caster, args...) -> [{}, []]
+    view: SpellView
+
+class SpeakSpell extends Spell
+    apply: (context, caster, message) ->
+        return [{ message: message }, context.playerList]
+
+    view: SpeakSpellView
+
+
+
+exports.speak = new SpeakSpell()
