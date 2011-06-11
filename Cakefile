@@ -12,7 +12,10 @@ run = (cmd) ->
             process.exit err.code
 
 task 'build', 'build NuMUD', ->
-    run 'coffee -c -o lib src/'
+    run 'coffee -c -o bin src/'
 
 task 'build:watch', 'watch NuMUD source files for changes and automatically rebuild', ->
-    proc = spawn 'coffee', ['-w', '-c', '-o', 'lib', 'src/'], { customFds: fds }
+    proc = spawn 'coffee', ['-w', '-c', '-o', 'bin', 'src/'], { customFds: fds }
+
+task 'runserver', 'Start the NuMUD server', ->
+    proc = spawn 'node', ['bin/server.js'], { customFds: fds }

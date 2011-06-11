@@ -1,4 +1,4 @@
-_=require('../underscore')
+_=require('../lib/underscore')
 
 class Room
     constructor: (@world, definition) ->
