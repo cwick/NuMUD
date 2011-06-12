@@ -20,8 +20,8 @@ class CommandAspect extends Aspect
     description: "Enables the entity to respond to commands"
 
     _onAspectInstalled: (aspect) ->
-        if aspect.name == "telnet"
-            aspect.on 'userInput', (str) => @doString str
+        if aspect.like "text"
+            aspect.on "textInput", (str) => @doString str
 
     _commands: {}
     _prefixes: []

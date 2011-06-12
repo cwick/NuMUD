@@ -4,16 +4,19 @@ Entity = require './entity'
 
 
 # This will eventually be data-driven.
-# For now we just do it programatically
+# For now we just do it programatically, but you can easily see
+# how this information could be read from a template file.
 createPlayer = () ->
-    CommandAspect = require './aspects/command'
-    TelnetAspect = require './aspects/telnet'
+    command = require './aspects/command'
+    telnet = require './aspects/telnet'
+    log = require './aspects/textLog'
 
     player = new Entity()
-    for aspect in [CommandAspect, TelnetAspect]
+    for aspect in [log, command, telnet]
         do (aspect) -> player.installAspect(new aspect())
 
     return player
+
 
 server = Net.createServer ((socket)->
     player = createPlayer()
@@ -34,6 +37,5 @@ server = Net.createServer ((socket)->
 
 port = 8000
 server.listen port
-
 
 console.log "NuMUD server started on port #{port}"

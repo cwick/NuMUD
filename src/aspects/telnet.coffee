@@ -1,7 +1,7 @@
 Net = require 'net'
-Aspect = require './aspect'
+TextInterfaceAspect = require './text'
 
-class TelnetAspect extends Aspect
+class TelnetAspect extends TextInterfaceAspect
     name: "telnet"
     description: "Enables the entity to send/receive text data over the telnet protocol"
 
@@ -14,7 +14,7 @@ class TelnetAspect extends Aspect
             if idx != -1
                 # Found end of line, run the command
                 @_buffer += data.substring 0, idx
-                @emit 'userInput', @_buffer
+                @emit 'textInput', @_buffer
                 @_buffer = ""
             else
                 # No end of line yet, keep buffering it up
@@ -31,6 +31,7 @@ class TelnetAspect extends Aspect
     write: (str) ->
         if not @isDisconnected
             @_socket.write str
+            @emit 'textOutput', str
 
     writeLine: (str) ->
         str = "#{if str? then str else ''}\r\n"
