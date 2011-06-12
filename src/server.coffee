@@ -1,21 +1,35 @@
-telnet = require './telnet'
-Player = require('./player').Player
-Command = require('./cmd')
-World = require('./world')
+Net = require 'net'
+#World = require './world'
+Entity = require './entity'
 
-server = telnet.createServer ((client)->
-    player = new Player(client)
-    World.addEntity(player, 1)
 
-    player.look()
-    player.showPrompt()
+# This will eventually be data-driven.
+# For now we just do it programatically
+createPlayer = () ->
+    CommandAspect = require './aspects/command'
+    TelnetAspect = require './aspects/telnet'
 
-    client.on 'command', (cmd)->
-        Command.doString(cmd, player)
+    player = new Entity()
+    for aspect in [CommandAspect, TelnetAspect]
+        do (aspect) -> player.installAspect(new aspect())
 
-        player.showPrompt()
+    return player
 
-    client.on 'close', () -> World.removeEntity player
+server = Net.createServer ((socket)->
+    player = createPlayer()
+    player.aspect("telnet").setSocket(socket)
+
+    # World.addEntity(player, 1)
+
+    # player.look()
+    # player.showPrompt()
+
+    # client.on 'command', (cmd)->
+    #     Command.doString(cmd, player)
+
+    #     player.showPrompt()
+
+    # client.on 'close', () -> World.removeEntity player
 )
 
 port = 8000

@@ -1,18 +1,24 @@
-_ = require('../lib/underscore')
 
-lastId = 0
+
 class Entity
-    constructor: (definition) ->
-        _(this).extend definition
-        lastId += 1
-        @id=lastId
+    constructor: () ->
+        @_aspects = {}
 
-    # TODO: not really how it's going to work, just here to satisfy duck typing
-    # till I find a better solution
-    write: ->
-    writeLine: ->
 
-    handleEvent: (event, sender, args) ->
-        # Do nothing
+    has: (aspectName) ->
+        @_aspects[aspectName]?
 
-exports.Entity = Entity
+    aspect: (aspectName) ->
+        @_aspects[aspectName]
+
+    installAspect: (aspect) ->
+        if not @has aspect
+            aspect.entity = this
+            @_aspects[aspect.name] = aspect
+
+        newAspect = aspect
+        for name, aspect of @_aspects
+            do (aspect) ->
+                aspect._onAspectInstalled(newAspect)
+
+module.exports = Entity
