@@ -1,4 +1,4 @@
-{
+[{
     "name": "player",
     "aspects": {
         "telnet": {},
@@ -7,6 +7,9 @@
         },
         "common": {
             "name": "Bob"
+        },
+        "placement": {
+            "parent": 2
         }
     }
-}
+}]

@@ -41,5 +41,8 @@ class Entity
             if handler
                 handler.call aspect,data
 
+    # Get the value of a property from an aspect
+    getProperty: (aspectName, key) ->
+        return @aspect(aspectName)?.properties[key]
 
 module.exports = Entity

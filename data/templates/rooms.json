@@ -1,0 +1,91 @@
+[{
+    "name": "room",
+    "aspects": {
+        "container": {},
+        "links": {}
+    }
+},
+{
+    "name": "sign",
+    "aspects": {
+        "common": {
+            "name": "A wooden sign"
+        },
+        "placement":{}
+    }
+},
+{
+    "name": "dustyHallway",
+    "inherits": "room",
+    "aspects": {
+        "common": {
+            "name": "A long dusty hallway"
+        }
+    }
+},
+{
+    "name": "diningRoom",
+    "inherits": "room",
+    "aspects": {
+        "common": {
+            "name": "An elegant dining room"
+        }
+    }
+},
+{
+    "name": "bathroom",
+    "inherits": "room",
+    "aspects": {
+        "common": {
+            "name": "A small bathroom"
+        }
+    }
+},
+{
+    "sid": 1,
+    "inherits": "dustyHallway",
+    "aspects": {
+        "links": {
+            "n": 2,
+            "s": 3
+        }
+    }
+},
+{
+    "sid": 2,
+    "inherits": "dustyHallway",
+    "aspects": {
+        "links": {
+            "s": 1
+        }
+    }
+},
+{
+    "sid": 3,
+    "inherits": "diningRoom",
+    "aspects": {
+        "links": {
+            "n": 2,
+            "e": 4
+        }
+    }
+},
+{
+    "sid": 4,
+    "inherits": "bathroom",
+    "aspects": {
+        "links": {
+            "w": 3
+        }
+    }
+},
+{
+    "sid": 5,
+    "inherits": "sign",
+    "aspects": {
+        "placement": {
+            "parent": 2
+        }
+    }
+}]
+

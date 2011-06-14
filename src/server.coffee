@@ -10,9 +10,14 @@ registerCommands = (player) ->
         entity.sendMessage("netWriteLine", "goodbye.")
         entity.sendMessage("netDisconnect")
 
+    cmd.register "look", ["l"], (entity) ->
+        room = entity.getProperty("placement", "parent")
+        entity.sendMessage("netWriteLine", "You are in room ##{room}")
+
 
 createPlayer = () ->
-    player = Template.load "player"
+    playerTemplate = Template.load "player"
+    player =  playerTemplate.instantiate()
     registerCommands(player)
 
     return player

@@ -2,25 +2,52 @@ fs = require 'fs'
 Entity = require './entity'
 
 
-createAspect = (name, properties) ->
-    aspectConstructor = require "./aspects/#{name}"
-    aspectInstance = new aspectConstructor()
+namedTemplates = {}
+instanceTemplates = {}
 
-    AspectProperties = ->
-    AspectProperties.prototype = properties
+# Quick n' dirty template loading. Just load everything into memory.
+loaded = false
+loadFromDisk = ->
+    path = "data/templates/"
+    files = fs.readdirSync path
+    for file in files
+        buffer = fs.readFileSync (path + file)
+        templateList = JSON.parse buffer
+        for template in templateList
+            templateWrapper = new Template(template)
+            if template.name
+                namedTemplates[template.name] = templateWrapper
+            else if template.sid?
+                instanceTemplates[template.sid] = templateWrapper
+    loaded = true
 
-    aspectInstance.properties = new AspectProperties()
+load = (name)->
+    if not loaded
+        loadFromDisk()
 
-    return aspectInstance
+    return namedTemplates[name]
 
-load = (name) ->
-    buffer = fs.readFileSync "data/templates/#{name}.json", 'utf8'
-    template = JSON.parse buffer
-    entity = new Entity()
+class Template
+    constructor: (@_template) ->
 
-    for aspectName, properties of template.aspects
-        entity.installAspect (createAspect aspectName, properties)
+    _createAspect: (name, properties) ->
+        aspectConstructor = require "./aspects/#{name}"
+        aspectInstance = new aspectConstructor()
 
-    return entity
+        AspectProperties = ->
+        AspectProperties.prototype = properties
+
+        aspectInstance.properties = new AspectProperties()
+
+        return aspectInstance
+
+    instantiate: ->
+        entity = new Entity()
+        entity.sid = @_template.sid
+
+        for aspectName, properties of @_template.aspects
+            entity.installAspect (@_createAspect aspectName, properties)
+
+        return entity
 
 exports.load = load
