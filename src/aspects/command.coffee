@@ -6,8 +6,7 @@ PREFIX_SPECIFIER = "^"
 defaultCommand = {
     callback:
         (entity) ->
-            if entity.has "telnet"
-                entity.aspect("telnet").writeLine "Huh?"
+            entity.sendMessage "netWriteLine", "Huh?"
 }
 
 # A do-nothing command
@@ -19,9 +18,6 @@ class CommandAspect extends Aspect
     name: "command"
     description: "Enables the entity to respond to commands"
 
-    _onAspectInstalled: (aspect) ->
-        if aspect.like "text"
-            aspect.on "textInput", (str) => @doString str
 
     _commands: {}
     _prefixes: []
@@ -92,6 +88,14 @@ class CommandAspect extends Aspect
         [cmd, args] = @_parseString str
 
         (@_findCommandOrAlias(cmd) or defaultCommand).callback(@entity, args)
+        @writePrompt()
 
+    writePrompt: ->
+        @entity.sendMessage("netWrite", "#{@properties.prompt or '>'} ")
+
+    onTextInput: (txt) -> @doString txt
+    onNetConnected: -> @writePrompt()
 
 module.exports = CommandAspect
+
+

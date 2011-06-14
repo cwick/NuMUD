@@ -1,0 +1,12 @@
+{
+    "name": "player",
+    "aspects": {
+        "telnet": {},
+        "command": {
+            "prompt": ">"
+        },
+        "common": {
+            "name": "Bob"
+        }
+    }
+}

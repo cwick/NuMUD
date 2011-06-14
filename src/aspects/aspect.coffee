@@ -1,10 +1,5 @@
 
-EventEmitter = (require 'events').EventEmitter
-
-class Aspect extends EventEmitter
-    _onAspectInstalled: ->
-
-
+class Aspect
     # Returns true if this aspect is derived from the given aspect name
     like: (name) ->
         _like = (name, obj) ->
@@ -17,5 +12,15 @@ class Aspect extends EventEmitter
 
         _like name, this
 
+Object.defineProperty Aspect.prototype, "baseName", {
+    get: ->
+        proto = Object.getPrototypeOf this
+        baseName = null
 
+        while proto.name
+            baseName = proto.name
+            proto = Object.getPrototypeOf proto
+
+        return baseName
+}
 module.exports = Aspect
