@@ -1,4 +1,5 @@
 command = require('./cmd')
+spells = require('./spells')
 
 class Player
     constructor: (@client, @db) ->
@@ -54,11 +55,9 @@ command.register "say", ["^'"], (context, args) ->
     if args.length == 0
         context.player.writeLine "What would you like to say?"
     else
-        context.player.writeLine "You say, \"#{args}\""
+        # Spell / view test. This isn't how it will really work!
+        data = new spells.SpeakSpell().cast(context.player, args)
         for player in context.playerList
-            do (player) ->
-                unless player == context.player
-                    player.writeLine "\nSomebody says, \"#{args}\""
-                    player.showPrompt()
+            new spells.SpeakSpellView().render(player, context.player, data)
 
 exports.Player = Player
