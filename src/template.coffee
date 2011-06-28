@@ -17,8 +17,8 @@ loadFromDisk = ->
             templateWrapper = new Template(template)
             if template.name
                 namedTemplates[template.name] = templateWrapper
-            else if template.sid?
-                instanceTemplates[template.sid] = templateWrapper
+            else if template.id?
+                instanceTemplates[template.id] = templateWrapper
     loaded = true
 
 load = (name)->
@@ -37,13 +37,24 @@ class Template
         AspectProperties = ->
         AspectProperties.prototype = properties
 
+        for key of properties
+            propertyDeclaration = aspectConstructor.prototype.properties?[key]
+            if not propertyDeclaration?
+                throw new Error("Unknown property '#{key}'")
+
+            if not propertyDeclaration.type?
+                throw new Error("Missing 'type' specifier for property '#{key}'")
+
+            if propertyDeclaration.type == "guid"
+                Object.defineProperty properties, key, {get: -> "hello"}
+
         aspectInstance.properties = new AspectProperties()
 
         return aspectInstance
 
     instantiate: ->
         entity = new Entity()
-        entity.sid = @_template.sid
+        entity.id = @_template.id
 
         for aspectName, properties of @_template.aspects
             entity.installAspect (@_createAspect aspectName, properties)

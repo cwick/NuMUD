@@ -42,7 +42,7 @@
     }
 },
 {
-    "sid": 1,
+    "id": 1,
     "inherits": "dustyHallway",
     "aspects": {
         "links": {
@@ -52,7 +52,7 @@
     }
 },
 {
-    "sid": 2,
+    "id": 2,
     "inherits": "dustyHallway",
     "aspects": {
         "links": {
@@ -61,7 +61,7 @@
     }
 },
 {
-    "sid": 3,
+    "id": 3,
     "inherits": "diningRoom",
     "aspects": {
         "links": {
@@ -71,7 +71,7 @@
     }
 },
 {
-    "sid": 4,
+    "id": 4,
     "inherits": "bathroom",
     "aspects": {
         "links": {
@@ -80,7 +80,7 @@
     }
 },
 {
-    "sid": 5,
+    "id": 5,
     "inherits": "sign",
     "aspects": {
         "placement": {

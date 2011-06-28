@@ -12,7 +12,9 @@ registerCommands = (player) ->
 
     cmd.register "look", ["l"], (entity) ->
         room = entity.getProperty("placement", "parent")
-        entity.sendMessage("netWriteLine", "You are in room ##{room}")
+
+        entity.sendMessage("netWriteLine", "You are in room #{room.guid}")
+
 
 
 createPlayer = () ->

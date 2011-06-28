@@ -5,7 +5,7 @@ class PlacementAspect extends Aspect
     description:"Allows an entity to be positioned in the world"
 
     properties: {
-        parent: {type: "integer"}
+        parent: {type: "guid"}
     }
 
 module.exports = PlacementAspect

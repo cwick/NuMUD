@@ -5,7 +5,6 @@ class TelnetAspect extends TextInterfaceAspect
     name: "telnet"
     description: "Enables the entity to send/receive text data over the telnet protocol"
 
-
     setSocket: (@_socket) ->
         @isDisconnected = false
         @_buffer = ""

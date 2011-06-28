@@ -17,7 +17,9 @@ emptyCommand = {
 class CommandAspect extends Aspect
     name: "command"
     description: "Enables the entity to respond to commands"
-
+    properties: {
+        prompt: {type: "string"}
+    }
 
     _commands: {}
     _prefixes: []
